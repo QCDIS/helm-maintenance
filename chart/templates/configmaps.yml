@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "maintenance.fullname" . }}-caddy
+  labels:
+    {{- include "maintenance.labels" . | nindent 4 }}
+data:
+  Caddyfile: |
+    :80 {
+      root * /usr/share/caddy
+      file_server
+
+      @404 {
+        not file
+      }
+      handle @404 {
+        rewrite * /index.html
+        file_server
+      }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "maintenance.fullname" . }}-html
+  labels:
+    {{- include "maintenance.labels" . | nindent 4 }}
+data:
+  index.html: |
+    <!DOCTYPE HTML>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>{{ .Values.maintenance.title }}</title>
+      <meta name="description" content="This service is temporarily unavailable">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="icon" type="image/svg+xml" href="{{ .Values.maintenance.faviconHref | trim }}" />
+      <style>
+          * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+          }
+          body {
+              font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif;
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+              background-color: #f9f9f9;
+              color: #535368;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              height: 100vh;
+              flex-direction: column;
+              text-align: center;
+          }
+          .artwork {
+              height: auto;
+              max-height: 50vh;
+              max-width: 80vw;
+              margin-bottom: 4rem;
+          }
+          h1 {
+              font-size: 2.5rem;
+              font-weight: 700;
+              margin-bottom: 1rem;
+              color: #2f2e41;
+          }
+          p {
+              line-height: 1.6;
+              font-size: 1.4rem;
+          }
+          @media only screen and (max-width: 500px) {
+              html {
+                  font-size: 75%;
+              }
+          }
+          @media (prefers-color-scheme: dark) {
+              body{
+                  background-color: #535368;
+                  color: #cddcdd;
+              }
+              h1 {
+                  color: #f9f9f9;
+              }
+          }
+      </style>
+    </head>
+    <body>
+    <img class="artwork" alt="maintenance banner" src="{{ .Values.maintenance.bannerSrc  | trim }}" />
+    <h1 id="title">{{ .Values.maintenance.title }}</h1>
+    {{- range .Values.maintenance.messageParagraphs }}
+    <p>{{ . }}</p>
+    {{- end }}
+    </body>
+    </html>
