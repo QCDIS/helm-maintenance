@@ -1,4 +1,4 @@
-# Maintenance page page Helm Chart
+# Maintenance page Helm Chart
 
 This Helm Chart deploys a maintenance page and configures ingress rules.
 
