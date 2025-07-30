@@ -7,7 +7,7 @@ This Helm Chart deploys a maintenance page and configures ingress rules.
 Deployment (simple):
 
 ```shell
-helm -n maintenance upgrade --create-namespace --install maintenance ./chart -f my-values.yaml
+helm -n maintenance upgrade --create-namespace --install maintenance oci://ghcr.io/qcdis/maintenance:v0.1.0 -f my-values.yaml
 ```
 
 Uninstall:
